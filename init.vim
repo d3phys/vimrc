@@ -1,31 +1,43 @@
-" General                                                                          
-set colorcolumn=80                                                      
+" General
+set colorcolumn=80
 set number
-                                                                                    
-" Tabs and spaces                                                                  
-set tabstop=4                                                         
-set softtabstop=4
-set shiftwidth=4
+
+" Tabs and spaces
+set tabstop=8
+set softtabstop=8
+set shiftwidth=8
 set expandtab
 set smartindent
-                                                                                    
-" Other                                                                            
+
+" Other
 set lazyredraw
-set redrawtime=10000                                                     
-set synmaxcol=180                                                       
-set re=1                                                         
-                                                                                    
+set redrawtime=10000
+set synmaxcol=180
+set re=1
+
 " Search
 set smartcase
 
+" Show trailing whitespace
+:set listchars=trail:_
+:set list
+
+" System clipboard support
+set clipboard=unnamedplus
+:inoremap p "+pa
+:vnoremap y "+y
+
+" Press <F5> to remove trailing whitespaces
+:nnoremap <silent> <F5> :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+
 call plug#begin()
 
-" Colorschemes                                                             
-Plug 'endel/vim-github-colorscheme'                                          
-Plug 'morhetz/gruvbox'                                                       
-                                                                            
+" Colorschemes
+Plug 'endel/vim-github-colorscheme'
+Plug 'morhetz/gruvbox'
+
 " File explorer
-Plug 'preservim/nerdtree'                                                    
+Plug 'preservim/nerdtree'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -36,12 +48,12 @@ Plug 'neovim/nvim-lspconfig'
 " Better escape via 'jk'
 Plug 'jdhao/better-escape.vim'
 
-" Debug via gdb 
+" Debug via gdb
 Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh' }
 
 call plug#end()
 
-" Colorscheme                                                                      
+" Colorscheme
 colorscheme github
 
 let g:fzf_layout = { 'down': '~40%' }
@@ -49,20 +61,20 @@ let g:fzf_layout = { 'down': '~40%' }
 " LSP configuration
 
 lua << EOF
--- Mappings.                                                                        
--- See `:help vim.diagnostic.*` for documentation on any of the below functions     
-local opts = { noremap=true, silent=true }                                          
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)                    
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)                           
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)                           
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)                    
-                                                                                    
--- Use an on_attach function to only map the following keys                         
--- after the language server attaches to the current buffer                         
-local on_attach = function(client, bufnr)                                           
-  -- Enable completion triggered by <c-x><c-o>                                      
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')          
-                                                                                    
+-- Mappings.
+-- See `:help vim.diagnostic.*` for documentation on any of the below functions
+local opts = { noremap=true, silent=true }
+vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  -- Enable completion triggered by <c-x><c-o>
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, {
       -- disable virtual text
@@ -76,34 +88,34 @@ local on_attach = function(client, bufnr)
     }
   )
 
-  -- Mappings.                                                                      
-  -- See `:help vim.lsp.*` for documentation on any of the below functions          
-  local bufopts = { noremap=true, silent=true, buffer=bufnr }                       
-  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)                       
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)                        
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)                              
-  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)                    
-  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)                 
-  vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)       
-  vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)    
-  vim.keymap.set('n', '<space>wl', function()                                       
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))                        
-  end, bufopts)                                                                     
-  vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)             
-  vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)                     
-  vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)                
-  vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)                        
-  vim.keymap.set('n', '<space>f', vim.lsp.buf.formatting, bufopts)                  
+  -- Mappings.
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  local bufopts = { noremap=true, silent=true, buffer=bufnr }
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+  vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+  vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+  vim.keymap.set('n', '<space>wl', function()
+    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+  end, bufopts)
+  vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
+  vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
+  vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
+  vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+  vim.keymap.set('n', '<space>f', vim.lsp.buf.formatting, bufopts)
   end
-                                                                                    
-local lsp_flags = {                                                                 
-  -- This is the default in Nvim 0.7+                                               
-  debounce_text_changes = 150,                                                      
-}                                                                                   
-require('lspconfig')['clangd'].setup{                                               
-    on_attach = on_attach,                                                          
-    flags = lsp_flags,                                                              
-}  
+
+local lsp_flags = {
+  -- This is the default in Nvim 0.7+
+  debounce_text_changes = 150,
+}
+require('lspconfig')['clangd'].setup{
+    on_attach = on_attach,
+    flags = lsp_flags,
+}
 
 EOF
 
@@ -117,4 +129,4 @@ nnoremap <silent> <Leader>g :Commits<CR>
 nnoremap <silent> <Leader>H :Helptags<CR>
 nnoremap <silent> <Leader>hh :History<CR>
 nnoremap <silent> <Leader>h: :History:<CR>
-nnoremap <silent> <Leader>h/ :History/<CR> 
+nnoremap <silent> <Leader>h/ :History/<CR>
